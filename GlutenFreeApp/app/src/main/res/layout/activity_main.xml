@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F5F5F5">
+
+    <!-- Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="#4CAF50"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🌾 Gluten Free Foods"
+            android:textColor="#FFFFFF"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Find safe and unsafe foods"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:layout_marginTop="4dp" />
+    </LinearLayout>
+
+    <!-- Filter Buttons -->
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF"
+        android:padding="8dp">
+
+        <LinearLayout
+            android:id="@+id/categoryFilterLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/filterAllBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:layout_marginEnd="8dp"
+                android:text="All"
+                android:textSize="12sp"
+                android:background="@drawable/filter_button_active"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp" />
+
+            <Button
+                android:id="@+id/filterSafeBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:layout_marginEnd="8dp"
+                android:text="✓ GF Safe"
+                android:textSize="12sp"
+                android:background="@drawable/filter_button"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp" />
+
+            <Button
+                android:id="@+id/filterUnsafeBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:layout_marginEnd="8dp"
+                android:text="✗ Contains Gluten"
+                android:textSize="12sp"
+                android:background="@drawable/filter_button"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp" />
+
+            <Button
+                android:id="@+id/filterFavoritesBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="★ Favorites"
+                android:textSize="12sp"
+                android:background="@drawable/filter_button"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp" />
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <!-- Search Bar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:background="#FFFFFF"
+        android:elevation="2dp">
+
+        <EditText
+            android:id="@+id/searchEditText"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:hint="Search foods..."
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:background="@drawable/search_background"
+            android:inputType="text"
+            android:maxLines="1" />
+
+        <ImageButton
+            android:id="@+id/searchButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="8dp"
+            android:background="#4CAF50"
+            android:src="@android:drawable/ic_menu_search"
+            android:contentDescription="Search" />
+    </LinearLayout>
+
+    <!-- Food List -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="8dp"
+        android:clipToPadding="false" />
+
+</LinearLayout>
