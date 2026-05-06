@@ -14,12 +14,18 @@ public class FoodDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_food_detail);
 
-        // Get data from intent
+        // Get data from intent with null safety
         Intent intent = getIntent();
-        String name = intent.getStringExtra("name");
-        String category = intent.getStringExtra("category");
-        String description = intent.getStringExtra("description");
-        boolean isSafe = intent.getBooleanExtra("isSafe", true);
+        if (intent == null || !intent.hasExtra("food_item")) {
+            finish();
+            return;
+        }
+        
+        FoodItem foodItem = intent.getParcelableExtra("food_item");
+        if (foodItem == null) {
+            finish();
+            return;
+        }
 
         // Set up views
         TextView titleText = findViewById(R.id.detailTitle);
@@ -28,11 +34,11 @@ public class FoodDetailActivity extends AppCompatActivity {
         TextView safeStatus = findViewById(R.id.safeStatus);
         Button backBtn = findViewById(R.id.backBtn);
 
-        titleText.setText(name);
-        categoryText.setText("Category: " + category);
-        descText.setText(description);
+        titleText.setText(foodItem.getName());
+        categoryText.setText("Category: " + foodItem.getCategory());
+        descText.setText(foodItem.getDescription());
 
-        if (isSafe) {
+        if (foodItem.isSafe()) {
             safeStatus.setText("✓ GLUTEN FREE - Safe to Eat");
             safeStatus.setTextColor(ContextCompat.getColor(this, R.color.green));
         } else {
