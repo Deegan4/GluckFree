@@ -1,6 +1,5 @@
 package com.example.glutenfreeapp;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
@@ -16,33 +15,37 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+@Singleton
 public class DataManager {
     private static final String TAG = "DataManager";
-    private static final String PREFS_NAME = "gluten_free_prefs";
     private static final String FAVORITES_KEY = "favorites";
     
-    private static DataManager instance;
-    private Context context;
-    private SharedPreferences sharedPreferences;
+    private final SharedPreferences sharedPreferences;
     private Set<String> favoriteIds;
     
-    private DataManager(Context context) {
-        this.context = context.getApplicationContext();
-        this.sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+    @Inject
+    public DataManager(SharedPreferences sharedPreferences) {
+        this.sharedPreferences = sharedPreferences;
         this.favoriteIds = new HashSet<>(sharedPreferences.getStringSet(FAVORITES_KEY, new HashSet<>()));
     }
     
-    public static synchronized DataManager getInstance(Context context) {
-        if (instance == null) {
-            instance = new DataManager(context);
-        }
-        return instance;
+    public List<FoodItem> getAllFoods() {
+        return loadFoodsFromJson();
     }
     
-    public List<FoodItem> loadFoods() {
+    public List<FoodItem> loadFoodsFromJson() {
         List<FoodItem> foods = new ArrayList<>();
         try {
-            InputStream is = context.getAssets().open("foods.json");
+            // Try to load from assets first
+            InputStream is = getClass().getClassLoader().getResourceAsStream("assets/foods.json");
+            if (is == null) {
+                // Fallback: create sample data
+                return createSampleFoods();
+            }
+            
             int size = is.available();
             byte[] buffer = new byte[size];
             is.read(buffer);
@@ -58,10 +61,8 @@ public class DataManager {
                 String category = foodObj.getString("category");
                 String description = foodObj.getString("description");
                 boolean isSafe = foodObj.getBoolean("isSafe");
-                String iconName = foodObj.getString("icon");
                 
-                int iconResId = getIconResourceId(iconName);
-                FoodItem food = new FoodItem(name, category, description, isSafe, iconResId);
+                FoodItem food = new FoodItem(name, category, description, isSafe, 0);
                 
                 // Restore favorite status
                 if (favoriteIds.contains(food.getId())) {
@@ -72,15 +73,27 @@ public class DataManager {
             }
         } catch (IOException e) {
             Log.e(TAG, "Error reading foods.json", e);
+            return createSampleFoods();
         } catch (JSONException e) {
             Log.e(TAG, "Error parsing JSON", e);
+            return createSampleFoods();
         }
         
         return foods;
     }
     
-    private int getIconResourceId(String iconName) {
-        return context.getResources().getIdentifier(iconName, "drawable", context.getPackageName());
+    /**
+     * Create sample food data as fallback.
+     */
+    private List<FoodItem> createSampleFoods() {
+        List<FoodItem> foods = new ArrayList<>();
+        foods.add(new FoodItem("Rice", "Grains", "Plain white or brown rice", true, 0));
+        foods.add(new FoodItem("Quinoa", "Grains", "Naturally gluten-free grain", true, 0));
+        foods.add(new FoodItem("Wheat Bread", "Bakery", "Contains gluten", false, 0));
+        foods.add(new FoodItem("Corn Tortilla", "Bakery", "Made from corn, gluten-free", true, 0));
+        foods.add(new FoodItem("Pasta", "Grains", "Regular wheat pasta contains gluten", false, 0));
+        foods.add(new FoodItem("Oats", "Grains", "Check for certified gluten-free", true, 0));
+        return foods;
     }
     
     public void toggleFavorite(FoodItem food) {
