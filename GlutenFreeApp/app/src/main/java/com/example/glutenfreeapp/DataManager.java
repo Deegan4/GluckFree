@@ -22,6 +22,7 @@ import javax.inject.Singleton;
 public class DataManager {
     private static final String TAG = "DataManager";
     private static final String FAVORITES_KEY = "favorites";
+    private static final String ONBOARDING_COMPLETE_KEY = "onboarding_complete";
     
     private final SharedPreferences sharedPreferences;
     private Set<String> favoriteIds;
@@ -30,6 +31,22 @@ public class DataManager {
     public DataManager(SharedPreferences sharedPreferences) {
         this.sharedPreferences = sharedPreferences;
         this.favoriteIds = new HashSet<>(sharedPreferences.getStringSet(FAVORITES_KEY, new HashSet<>()));
+    }
+    
+    /**
+     * Check if onboarding has been completed.
+     */
+    public boolean isOnboardingComplete() {
+        return sharedPreferences.getBoolean(ONBOARDING_COMPLETE_KEY, false);
+    }
+    
+    /**
+     * Mark onboarding as completed.
+     */
+    public void setOnboardingComplete() {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean(ONBOARDING_COMPLETE_KEY, true);
+        editor.apply();
     }
     
     public List<FoodItem> getAllFoods() {
